@@ -1,0 +1,2 @@
+## @RestController
+@RestController là một phiên bản đặc biệt của controller, nó được kết hợp bởi @Controller và @ResponseBody giúp cho việc xây dựng các RESTful API được dễ dàng hơn, đơn giản hơn và ở đây mình cũng sử dụng @RequestMapping để chỉ đường dẫn tới source chung là book-rest và sử dụng annotation @GetMapping để đánh dấu phương thức này là GET.
