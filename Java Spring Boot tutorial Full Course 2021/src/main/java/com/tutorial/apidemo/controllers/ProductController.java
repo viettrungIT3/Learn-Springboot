@@ -37,4 +37,17 @@ public class ProductController {
                         new ResponseObject("404", "Cannot find product with id = "+id, "")
                 );
     }
+
+    @PostMapping("/insert")
+    ResponseEntity<?> insertProduct(@RequestBody Product newProduct) {
+        List<Product> foundProduct = repository.findByProductName(newProduct.getProductName().trim());
+        if (foundProduct.size() > 0 ) {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+                    new ResponseObject("501", "Product name already taken", "")
+            );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("200", "Insert Product successfully!", repository.save(newProduct))
+        );
+    }
 }
