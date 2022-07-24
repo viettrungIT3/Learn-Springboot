@@ -32,22 +32,36 @@ public class ProductController {
                 ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject("200", "Query product successfully", foundProduct)
                         //you can replace "ok" with your defined "error code"
-                ):
+                ) :
                 ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        new ResponseObject("404", "Cannot find product with id = "+id, "")
+                        new ResponseObject("404", "Cannot find product with id = " + id, "")
                 );
     }
 
     @PostMapping("/insert")
     ResponseEntity<?> insertProduct(@RequestBody Product newProduct) {
         List<Product> foundProduct = repository.findByProductName(newProduct.getProductName().trim());
-        if (foundProduct.size() > 0 ) {
+        if (foundProduct.size() > 0) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
                     new ResponseObject("501", "Product name already taken", "")
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("200", "Insert Product successfully!", repository.save(newProduct))
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        boolean exists = repository.existsById(id);
+        if (exists) {
+            repository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("200", "Delete product Successfully!", "")
+            );
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("404", "Can not find product id = " + id, "")
         );
     }
 }
