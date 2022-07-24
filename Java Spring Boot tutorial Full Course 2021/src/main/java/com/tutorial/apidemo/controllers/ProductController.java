@@ -51,6 +51,26 @@ public class ProductController {
         );
     }
 
+    @PutMapping("/{id}")
+    ResponseEntity<?> updateProductById(@RequestBody Product newProduct, @PathVariable Long id) {
+        if (repository.existsById(id)) {
+            Optional<Product> updatedProduct = repository.findById(id)
+                    .map(product -> {
+                        product.setProductName(newProduct.getProductName());
+                        product.setYear(newProduct.getYear());
+                        product.setPrice(newProduct.getPrice());
+                        return repository.save(product);
+                    });
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("ok", "Update Product successfully", updatedProduct)
+            );
+
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseObject("404", "Can not find product id = " + id, "")
+        );
+    }
+
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         boolean exists = repository.existsById(id);
