@@ -6,12 +6,21 @@ import java.util.Objects;
 
 //POJO = Plain Object Java Object
 @Entity
-@Table(name = "tblProduct")
+@Table(name="tblProduct")
 public class Product {
     //this is "primary key"
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) //auto-increment
-
+    //you can also use "sequence"
+//    @SequenceGenerator(
+//            name = "product_sequence",
+//            sequenceName = "product_sequence",
+//            allocationSize = 1 //increment by 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE,
+//            generator = "product_sequence"
+//    )
     private Long id;
     //validate = constraint
     @Column(nullable = false, unique = true, length = 300)
@@ -19,12 +28,15 @@ public class Product {
     private int year;
     private Double price;
     private String url;
-
     //default constructor
-    public Product() {
+    public Product() {}
+    //calculated field = transient, not exist in MySql
+    @Transient
+    private int age;//age is calculated from "year"
+    public int getAge() {
+        return Calendar.getInstance().get(Calendar.YEAR) - year;
     }
-
-    public Product(String productName, int year, Double price, String url) {
+    public Product( String productName, int year, Double price, String url) {
         this.productName = productName;
         this.year = year;
         this.price = price;
@@ -82,4 +94,21 @@ public class Product {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return year == product.year
+                && age == product.age && Objects.equals(id, product.id)
+                && Objects.equals(productName, product.productName) &&
+                Objects.equals(price, product.price) && Objects.equals(url, product.url);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, productName, year, price, url, age);
+    }
 }
+
